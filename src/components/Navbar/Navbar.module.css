@@ -1,0 +1,46 @@
+.navbar {
+  background-color: #0d162e;;
+  padding: 1rem 2rem;
+  color: white;
+  border-bottom: 3px solid #ffffff; /* Adds a line below the navbar */
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  padding: 0rem 6rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.logo p {
+  color: white;
+}
+
+.logo .highlight {
+  color: red;
+}
+
+.list {
+  list-style: none;
+  display: flex;
+  align-items: center; /* Ensure items are aligned in the center */
+  gap: 2rem; /* Use gap for spacing between list items */
+}
+
+.list li {
+  padding: 0.5rem 1rem;
+  font-size: 1.1rem;
+  cursor: pointer; /* Added cursor change on hover */
+  transition: transform 0.2s ease-in-out; /* Add transition for smooth scaling */
+}
+
+.list li:hover {
+  transform: scale(1.3); /* Scale up the list item on hover */
+  text-decoration: underline;
+}
