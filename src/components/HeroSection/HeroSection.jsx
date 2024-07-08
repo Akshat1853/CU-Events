@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./HeroSection.module.css";
+import {Link} from 'react-router-dom';
 
 const HeroSection = () => {
   return (
@@ -24,8 +25,8 @@ const HeroSection = () => {
         </div>
 
         <div className={styles.btn_container}>
-          <button>Get Started</button>
-          <button>Explore Events</button>
+          <button><Link to='/login'>Get Started</Link></button>
+          <button><Link to='/explore'>Explore Events</Link></button>
         </div>
       </section>
     </main>
