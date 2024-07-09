@@ -1,69 +1,93 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { IoMdArrowBack } from "react-icons/io";
-import styles from "./Form.module.css";
+import React, { useState } from "react"; 
+import { Link, useNavigate } from "react-router-dom"; 
+import { IoMdArrowBack } from "react-icons/io"; 
+import styles from "./Form.module.css"; 
 import pattern_img from "../../assets/patter_img.jpg";
-import { useForm } from "react-hook-form";
+import { useForm } from "react-hook-form"; 
+import { auth, db } from "../../firebase"; // Import Firebase auth and Firestore database
+import {
+  signInWithEmailAndPassword, // Import Firebase function for signing in
+  createUserWithEmailAndPassword, // Import Firebase function for creating a new user
+} from "firebase/auth";
+
+ //Firestore functions for setting documents
+import { collection, doc, setDoc } from "firebase/firestore";
 
 // Custom validation functions
 const validateName = (value) => {
-  if (!value) return "Name is required";
-  if (value.length < 3) return "Minimum length is 3";
-  if (value.length > 30) return "Maximum length is 30";
+  if (!value) return "Name is required"; // Check if name is provided
+  if (value.length < 3) return "Minimum length is 3"; // Validate name length
+  if (value.length > 30) return "Maximum length is 30"; // Validate name length
   return true;
 };
 
 const validateEmail = (value) => {
   // Simple regex for basic email validation
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!value) return "Email is required";
-  if (!emailPattern.test(value)) return "Invalid email format";
+  if (!value) return "Email is required"; // Check if email is provided
+  if (!emailPattern.test(value)) return "Invalid email format"; // Validate email format
   return true;
 };
 
 const validatePassword = (value) => {
-  if (!value) return "Password is required";
-  if (value.length <= 5) return "Password must be longer than 5 characters";
+  if (!value) return "Password is required"; // Check if password is provided
+  if (value.length < 6) return "Password must be longer than 6 characters"; // Validate password length
   return true;
 };
 
 const validateUid = (value) => {
   // Regex pattern for UID validation
   const uidPattern = /^\d{2}[a-zA-Z]{3}\d{3,}$/;
-  if (!value) return "UID is required";
-  if (value.length < 8) return "Minimum length is 8";
+  if (!value) return "UID is required"; // Check if UID is provided
+  if (value.length < 8) return "Minimum length is 8"; // Validate UID length
   if (!uidPattern.test(value))
-    return "UID must be in the format: 2 digits, 3 letters, then 3 or more digits";
+    return "UID must be in the format: 2 digits, 3 letters, then 3 or more digits"; // Validate UID format
   return true;
 };
 
 const Form = ({ LoginPage }) => {
   const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors, isSubmitting },
+    register, // Function to register input fields
+    handleSubmit, // Function to handle form submission
+    watch, // Function to watch form values
+    formState: { errors, isSubmitting }, // Object containing form state (errors and submission status)
   } = useForm();
+
+  const navigate = useNavigate(); // Hook to programmatically navigate
 
   // State to toggle between sign up and login form
   const [isLogin, setIsLogin] = useState(LoginPage);
 
+  // Function to toggle between login and sign-up forms
   const handleToggle = () => {
     setIsLogin(!isLogin);
   };
 
-  const delay = (d) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve();
-      }, d * 1000);
-    });
-  };
-
+  // Function to handle form submission
   const onSubmit = async (data) => {
-    // Handle form submission here
-    await delay(4); // simulating network delay
-    console.log(data);
+    try {
+      if (isLogin) {
+        // Login logic
+        await signInWithEmailAndPassword(auth, data.email, data.password);
+      } else {
+        // Sign-up logic
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          data.email,
+          data.password
+        );
+        // Store user data in Firestore
+        await setDoc(doc(collection(db, "users"), userCredential.user.uid), {
+          name: data.name,
+          uid: data.uid,
+          email: data.email,
+        });
+      }
+      // Redirect to explore page after login/signup
+      navigate("/");
+    } catch (error) {
+      console.error("Error:", error.message); // Log any errors that occur
+    }
   };
 
   return (
