@@ -1,10 +1,10 @@
-import React from 'react';
-import Form from '../components/Form/Form';
+import React from "react";
+import Form from "../components/Form/Form";
 
-const Login = () => {
+const Login = ({ LoginPage }) => {
   return (
     <div>
-      <Form/>
+      <Form LoginPage={LoginPage} />
     </div>
   );
 };
